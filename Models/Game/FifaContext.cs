@@ -9,6 +9,14 @@ namespace StudentFunctions.Models.Game
         {
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                var connectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING");
+                optionsBuilder.UseSqlServer(connectionString); // Use the connection string from the environment variable
+            }
+        }
         public DbSet<Game> Games { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

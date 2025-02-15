@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using StudentFunctions.Models.Game;
 using Microsoft.EntityFrameworkCore;
+using System.Net; 
 
 namespace Fifa.Function
 {

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using StudentFunctions.Models.Game;
 using Microsoft.EntityFrameworkCore; // For async methods
+using Microsoft.Extensions.Configuration; // For accessing environment variables
 
 namespace Fifa.Function
 {
@@ -15,10 +16,32 @@ namespace Fifa.Function
         private readonly ILogger<FifaAPI> _logger;
         private readonly FifaContext _context;
 
+        // Constructor with dependency injection
         public FifaAPI(ILogger<FifaAPI> logger, FifaContext context)
         {
             _logger = logger;
             _context = context;
+        }
+
+        // Get the connection string from environment variable (Azure)
+        private string GetConnectionString()
+        {
+            var connectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING");
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                _logger.LogError("DATABASE_CONNECTION_STRING environment variable is not set.");
+                throw new InvalidOperationException("Database connection string is missing.");
+            }
+
+            return connectionString;
+        }
+
+        // OnConfiguring method to set up the context with the connection string
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            var connectionString = GetConnectionString();
+            optionsBuilder.UseSqlServer(connectionString);
         }
 
         [Function("Welcome")]
